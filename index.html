@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
 <meta charset="UTF-8">
 <title>Deep Learning Quiz</title>
 
@@ -9,36 +11,31 @@
 body{
 margin:0;
 font-family:Arial;
-color:white;
-overflow:hidden;
 background:#020617;
+color:white;
+text-align:center;
 }
 
 canvas{
 position:fixed;
 top:0;
 left:0;
-z-index:0;
+z-index:-1;
 }
 
 .container{
-position:relative;
-z-index:1;
-width:700px;
+width:650px;
 margin:auto;
-margin-top:80px;
+margin-top:60px;
 background:#0f172a;
 padding:30px;
-border-radius:12px;
-box-shadow:0 0 25px #22c55e;
-text-align:center;
+border-radius:10px;
+box-shadow:0 0 20px #22c55e;
 }
 
-h1{color:#22c55e}
-
 button{
-padding:12px;
-margin:10px;
+padding:10px;
+margin:8px;
 border:none;
 border-radius:6px;
 background:#22c55e;
@@ -46,17 +43,11 @@ color:white;
 cursor:pointer;
 }
 
-button:hover{background:#16a34a}
-
 .answer{
 display:block;
 width:100%;
 background:#1e293b;
-margin:8px 0;
 }
-
-.correct{background:#15803d !important}
-.wrong{background:#b91c1c !important}
 
 .progress{
 width:100%;
@@ -67,44 +58,33 @@ margin:20px 0;
 
 .progress-bar{
 height:100%;
-width:0%;
 background:#22c55e;
+width:0%;
 }
 
-.hidden{display:none}
-
-.timer{font-size:18px;color:#22c55e}
-
-img.mnist{
-width:120px;
-image-rendering:pixelated;
-background:white;
-margin:10px;
+.hidden{
+display:none;
 }
 
-table{
-width:100%;
-margin-top:20px;
-}
-
-td{padding:5px}
+.correct{background:#15803d !important}
+.wrong{background:#b91c1c !important}
 
 </style>
+
 </head>
 
 <body>
+    <h1>Deep Learning Quiz</h1>
 
-<canvas id="network"></canvas>
+<canvas id="bg"></canvas>
 
 <div class="container">
 
 <div id="start">
 
-<h1>Deep Learning Quiz</h1>
 
-<p>Digite seu nome</p>
 
-<input id="name" placeholder="Nome">
+<input id="name" placeholder="Digite seu nome">
 
 <br>
 
@@ -114,17 +94,11 @@ td{padding:5px}
 
 <div id="quiz" class="hidden">
 
-<h1>Deep Learning Quiz</h1>
-
-<div class="timer">Tempo: <span id="time">20</span></div>
+<h2 id="question"></h2>
 
 <div class="progress">
 <div class="progress-bar" id="progress"></div>
 </div>
-
-<h2 id="question"></h2>
-
-<img id="image" class="mnist hidden">
 
 <div id="answers"></div>
 
@@ -136,17 +110,13 @@ td{padding:5px}
 
 <div id="result" class="hidden">
 
-<h1>Resultado</h1>
-
 <h2 id="score"></h2>
 
 <p>📸 Tire um print e envie para a professora.</p>
 
-<h3>Ranking da Turma</h3>
+<h3>Ranking</h3>
 
-<table id="ranking"></table>
-
-<button onclick="location.reload()">Refazer</button>
+<div id="ranking"></div>
 
 </div>
 
@@ -156,7 +126,7 @@ td{padding:5px}
 
 /* animação rede neural */
 
-const canvas=document.getElementById("network")
+const canvas=document.getElementById("bg")
 const ctx=canvas.getContext("2d")
 
 canvas.width=window.innerWidth
@@ -167,15 +137,10 @@ let nodes=[]
 for(let i=0;i<40;i++){
 
 nodes.push({
-
 x:Math.random()*canvas.width,
-
 y:Math.random()*canvas.height,
-
 vx:(Math.random()-0.5)*1,
-
 vy:(Math.random()-0.5)*1
-
 })
 
 }
@@ -221,82 +186,67 @@ requestAnimationFrame(animate)
 
 animate()
 
-/* QUIZ */
+/* quiz */
 
-function shuffle(a){return a.sort(()=>Math.random()-0.5)}
-
-let questions=shuffle([
-
-{
-q:"Deep Learning pertence a:",
-a:[
-{text:"Machine Learning",correct:true},
-{text:"Banco de dados"},
-{text:"Hardware"},
-{text:"Redes"}
-]
-},
-
-{
-q:"Este número no MNIST é:",
-img:"https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png",
-a:[
-{text:"Exemplo dataset",correct:true},
-{text:"Rede neural"},
-{text:"GPU"},
-{text:"Kernel"}
-]
-},
-
-{
-q:"Função de ativação comum:",
-a:[
-{text:"ReLU",correct:true},
-{text:"HTTP"},
-{text:"SQL"},
-{text:"DNS"}
-]
-},
-
-{
-q:"CNN é usada para:",
-a:[
-{text:"Imagens",correct:true},
-{text:"Planilhas"},
-{text:"Firewall"},
-{text:"Rede"}
-]
-},
-
-{
-q:"Overfitting significa:",
-a:[
-{text:"Modelo decorou dados",correct:true},
-{text:"Modelo rápido"},
-{text:"Modelo lento"},
-{text:"Modelo simples"}
-]
+function shuffle(a){
+return [...a].sort(()=>Math.random()-0.5)
 }
 
-])
+const questions=[
 
-while(questions.length<20){
+{q:"Deep Learning pertence a:",a:["Machine Learning","Banco de dados","Hardware","Redes"],c:0},
 
-questions.push(questions[Math.floor(Math.random()*5)])
+{q:"Redes neurais são inspiradas em:",a:["Cérebro humano","Internet","GPU","Servidor"],c:0},
 
-}
+{q:"Qual biblioteca é usada em Deep Learning?",a:["TensorFlow","Excel","Word","Photoshop"],c:0},
+
+{q:"O que a rede neural aprende?",a:["Pesos","Internet","Memória","Sistema"],c:0},
+
+{q:"Qual função de ativação é comum?",a:["ReLU","SQL","HTTP","DNS"],c:0},
+
+{q:"Dataset significa:",a:["Conjunto de dados","Código","Servidor","GPU"],c:0},
+
+{q:"Treinar modelo significa:",a:["Ajustar pesos","Criar site","Rodar HTML","Instalar GPU"],c:0},
+
+{q:"CNN é usada para:",a:["Imagens","Planilhas","Firewall","Rede"],c:0},
+
+{q:"RNN é usada para:",a:["Sequências","Imagem","Hardware","GPU"],c:0},
+
+{q:"Overfitting significa:",a:["Modelo decorou dados","Modelo rápido","Modelo lento","Modelo simples"],c:0},
+
+{q:"GPU ajuda porque:",a:["Processamento paralelo","Armazenar dados","Criar dataset","Executar HTML"],c:0},
+
+{q:"Loss function mede:",a:["Erro","Memória","Rede","Velocidade"],c:0},
+
+{q:"Softmax é usada para:",a:["Classificação","Memória","Servidor","Rede"],c:0},
+
+{q:"Epoch significa:",a:["Passagem pelo dataset","Erro","Camada","Função"],c:0},
+
+{q:"Camadas profundas permitem:",a:["Padrões complexos","Criar banco","Executar HTML","RAM"],c:0},
+
+{q:"Entrada da rede neural:",a:["Dados","GPU","Servidor","Kernel"],c:0},
+
+{q:"Saída da rede neural:",a:["Predição","Código","Memória","Dataset"],c:0},
+
+{q:"Deep Learning usa:",a:["Redes neurais profundas","Planilhas","Firewall","Drivers"],c:0},
+
+{q:"MNIST contém:",a:["Números escritos","Texto","Áudio","Vídeo"],c:0},
+
+{q:"Accuracy mede:",a:["Taxa de acerto","Velocidade","Memória","Rede"],c:0}
+
+]
+
+let quiz=shuffle(questions)
 
 let current=0
 let score=0
 let player=""
-let timer
-let time=20
 
 function startQuiz(){
 
 player=document.getElementById("name").value
 
-if(player==""){alert("Digite seu nome");return}
+if(player===""){alert("Digite seu nome");return}
 
 document.getElementById("start").classList.add("hidden")
 document.getElementById("quiz").classList.remove("hidden")
@@ -305,80 +255,41 @@ showQuestion()
 
 }
 
-function startTimer(){
-
-time=20
-document.getElementById("time").innerText=time
-
-timer=setInterval(()=>{
-
-time--
-document.getElementById("time").innerText=time
-
-if(time<=0){
-
-clearInterval(timer)
-
-document.getElementById("feedback").innerText="Tempo esgotado"
-
-document.getElementById("next").classList.remove("hidden")
-
-}
-
-},1000)
-
-}
-
 function showQuestion(){
 
-startTimer()
+let q=quiz[current]
 
-let q=questions[current]
-
-document.getElementById("question").innerText="Pergunta "+(current+1)+" de 20"
-
-let img=document.getElementById("image")
-
-if(q.img){
-
-img.src=q.img
-img.classList.remove("hidden")
-
-}else{
-
-img.classList.add("hidden")
-
-}
+document.getElementById("question").innerText="Pergunta "+(current+1)+": "+q.q
 
 let answers=document.getElementById("answers")
 
 answers.innerHTML=""
 
-shuffle(q.a).forEach(a=>{
+let shuffled=shuffle(q.a)
+
+shuffled.forEach(ans=>{
 
 let btn=document.createElement("button")
 
 btn.className="answer"
 
-btn.innerText=a.text
+btn.innerText=ans
 
-btn.onclick=()=>checkAnswer(btn,a,q)
+btn.onclick=()=>checkAnswer(btn,ans,q)
 
 answers.appendChild(btn)
 
 })
 
-document.getElementById("progress").style.width=(current/20)*100+"%"
+document.getElementById("progress").style.width=(current/quiz.length)*100+"%"
 
 }
 
-function checkAnswer(btn,a,q){
+function checkAnswer(btn,ans,q){
 
-clearInterval(timer)
+let correct=q.a[q.c]
 
-let correct=q.a.find(x=>x.correct)
-
-if(a.correct){
+if(ans===correct){
 
 score++
 btn.classList.add("correct")
@@ -391,7 +302,7 @@ else{
 
 btn.classList.add("wrong")
 
-document.getElementById("feedback").innerText="✖ Errado: "+correct.text
+document.getElementById("feedback").innerText="✖ Correto: "+correct
 
 }
 
@@ -406,13 +317,11 @@ document.getElementById("next").classList.add("hidden")
 
 current++
 
-if(current<20){
+if(current<quiz.length){
 
 showQuestion()
 
-}
-
-else{
+}else{
 
 finishQuiz()
 
@@ -423,7 +332,6 @@ finishQuiz()
 function finishQuiz(){
 
 document.getElementById("quiz").classList.add("hidden")
-
 document.getElementById("result").classList.remove("hidden")
 
 document.getElementById("score").innerText=player+" — "+score+"/20"
@@ -436,19 +344,15 @@ ranking.sort((a,b)=>b.score-a.score)
 
 localStorage.setItem("ranking",JSON.stringify(ranking))
 
-let table=document.getElementById("ranking")
-
-table.innerHTML=""
+let html=""
 
 ranking.slice(0,10).forEach(r=>{
 
-let row=document.createElement("tr")
-
-row.innerHTML="<td>"+r.name+"</td><td>"+r.score+"</td>"
-
-table.appendChild(row)
+html+=r.name+" — "+r.score+"<br>"
 
 })
+
+document.getElementById("ranking").innerHTML=html
 
 }
 
