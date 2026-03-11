@@ -82,7 +82,7 @@ display:none;
 
 <div id="start">
 
-<h1>Bem vindo!</h1>
+<h1>Bem vindo!!</h1>
 
 <input id="name" placeholder="Digite seu nome">
 
@@ -294,7 +294,7 @@ if(ans===correct){
 score++
 btn.classList.add("correct")
 
-document.getElementById("feedback").innerText="✔ Correto"
+document.getElementById("feedback").innerHTML="<span style='color:#22c55e'>✔</span> Correto"
 
 }
 
@@ -302,7 +302,7 @@ else{
 
 btn.classList.add("wrong")
 
-document.getElementById("feedback").innerText="✖ Errado: "+correct
+document.getElementById("feedback").innerHTML="<span style='color:#ef4444'>✖</span> Errado: "+correct
 
 }
 
