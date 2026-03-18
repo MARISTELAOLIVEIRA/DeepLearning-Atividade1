@@ -204,9 +204,9 @@ const questions=[
 
 {q:"Qual função de ativação é comum?",a:["ReLU","SSH","HTTP","DNS"],c:0},
 
-{q:"Dataset significa:",a:["Conjunto de dados","Código","Servidor","GPU"],c:0},
+{q:"Dataset significa:",a:["Conjunto de dados","Códigos","Serviços","GPU"],c:0},
 
-{q:"Treinar modelo significa:",a:["Ajustar pesos","Criar sosftware","Rodar HTML","Instalar GPU"],c:0},
+{q:"Treinar modelo significa:",a:["Ajustar pesos","Criar sosftware","Treinar algorítmo","Instalar GPU"],c:0},
 
 {q:"CNN é usada para:",a:["Imagens","Planilhas","Firewall","Rede"],c:0},
 
@@ -259,7 +259,7 @@ function showQuestion(){
 
 let q=quiz[current]
 
-document.getElementById("question").innerText="Pergunta "+(current+1)+": "+q.q
+document.getElementById("question").innerText="Pergunta "+(current+1)+" - "+q.q
 
 let answers=document.getElementById("answers")
 
